@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Testing WebPlayback service from Spotify
+        </title>
+    </head>
+    <body>
+        <h1>
+            Spotify Web Playback SDK Quick Start (
+            <a href="https://developer.spotify.com/documentation/web-playback-sdk/quick-start/">source</a>
+            )
+        </h1>
+        <div>
+            <button id="togglePlay">Toggle Play</button>
+            <div>
+                <button id="prev">prev</button>
+                <button id="next">next</button>
+            </div>
+        </div>
+        <script src="https://sdk.scdn.co/spotify-player.js"></script>
+        <script>
+            window.onSpotifyWebPlaybackSDKReady = () => {
+                const token = 'TOKEN_HERE';
+                const player = new Spotify.Player( {
+                    name: 'Web Playback SDK Testing',
+                    getOAuthToken: cb => {cb(token);},
+                    volume: 0.25
+                } );
+                // Ready
+                player.addListener('ready', ({device_id}) => {
+                    console.log('Ready with Device ID ', device_id);
+                } );
+                // not ready
+                player.addListener('not_ready', ({device_id}) => {
+                    console.log('Device ID has gone offline', device_id);
+                });
+                // other errors
+                player.addListener('initialization_error', ({message}) => {
+                    console.error(message);
+                });
+                player.addListener('authentication_error', ({ message }) => {
+                    console.error(message);
+                });
+                player.addListener('account_error', ({ message }) => {
+                    console.error(message);
+                });
+                document.getElementById('togglePlay').onclick = function() {
+                    player.togglePlay();
+                };
+                document.getElementById('prev').onclick = function() {
+                    player.previousTrack();
+                };
+                document.getElementById('next').onclick = function() {
+                    player.nextTrack();
+                };
+                // connecting
+                player.connect();
+            }
+        </script>
+        <script>
+            function httpGetAsync(theUrl, callback) {
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.onreadystatechange = function() { 
+                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                        callback(xmlHttp.responseText);
+                }
+                xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+                xmlHttp.send(null);
+            }
+        </script>
+    </body>
+</html>
